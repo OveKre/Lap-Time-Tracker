@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8" />
+    <title>Porsche Ringrada</title>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Lihtne CSS näidis */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #cc0000;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            max-width: 400px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #cc0000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e60000;
+        }
+        #results {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            display: none; /* Peidame alguses */
+            border: 1px solid #ddd;
+            max-width: 500px;
+        }
+        .success-img {
+            width: 300px;
+            display: block;
+            margin: 20px 0;
+        }
+        .error {
+            color: #e60000;
+            font-size: 0.9em;
+        }
+        /* Eduka sõnumi stiil */
+        #successMsg {
+            color: green;
+            margin-top: 10px;
+            display: none; /* Peidetud algselt */
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Porsche Ringrada</h1>
+
+<!-- Pilt, mis ilmub alles edukal valideerimisel -->
+<img id="trackImage"
+     src="pictures/slots-13-1000x618.jpg"
+     alt="Porsche Ringrada"
+     class="success-img"
+     style="display: none;" />
+
+<!-- Vorm kolme (või enama) väljaga -->
+<form id="raceForm">
+    <label for="carName">Auto nimi:</label>
+    <input type="text" id="carName" name="carName" placeholder="Nt Porsche 911" />
+
+    <label for="driverEmail">Juhi e-posti aadress:</label>
+    <input type="text" id="driverEmail" name="driverEmail" placeholder="näide@autod.ee" />
+
+    <label for="lapMinutes">Minutid:</label>
+    <input type="text" id="lapMinutes" placeholder="0" />
+
+    <label for="lapSeconds">Sekundid:</label>
+    <input type="text" id="lapSeconds" placeholder="0" />
+
+    <label for="lapHundredths">Sajandikud:</label>
+    <input type="text" id="lapHundredths" placeholder="0" />
+
+    <label for="trackCondition">Raja seisund:</label>
+    <select id="trackCondition" name="trackCondition">
+        <option value="kuiv">Kuiv</option>
+        <option value="märg">Märg</option>
+    </select>
+
+    <button type="button" id="submitBtn">Saada</button>
+    <div id="formError" class="error"></div>
+
+    <!-- Eduka salvestamise teade -->
+    <div id="successMsg">Andmed sisestatud!</div>
+</form>
+
+<button type="button" id="toggleResults">Näita/Peida Salvestatud Tulemused</button>
+
+<!-- DIV salvestatud tulemustele -->
+<div id="results">
+    <h2>Salvestatud ringiajad</h2>
+    <ul id="savedTimes"></ul>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        // Nupp "Saada" - vormi valideerimine ja andmete töötlemine
+        $("#submitBtn").click(function() {
+            // Tühjendame võimaliku vana veateate ja peidame edukuse sõnumi
+            $("#formError").text("");
+            $("#successMsg").hide();
+            $("#trackImage").hide();
+
+            // Loeme vormi väljade väärtused
+            const carName = $("#carName").val().trim();
+            const driverEmail = $("#driverEmail").val().trim();
+
+            // Minutid, sekundid, sajandikud
+            const lapMinutes = parseInt($("#lapMinutes").val().trim()) || 0;
+            const lapSeconds = parseInt($("#lapSeconds").val().trim()) || 0;
+            const lapHundredths = parseInt($("#lapHundredths").val().trim()) || 0;
+
+            const trackCondition = $("#trackCondition").val();
+
+            // Kontrollime, kas auto nimi ja e-post on täidetud
+            if (!carName || !driverEmail) {
+                $("#formError").text("Palun täida kõik väljad!");
+                return;
+            }
+
+            // Kontrollime, kas sisestatud minutid/sekundid/sajandikud on arvud
+            if (isNaN(lapMinutes) || isNaN(lapSeconds) || isNaN(lapHundredths)) {
+                $("#formError").text("Minutid, sekundid ja sajandikud peavad olema numbrilised!");
+                return;
+            }
+
+            // E-posti lihtsustatud regex-kontroll
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(driverEmail)) {
+                $("#formError").text("Palun sisesta korrektne e-posti aadress!");
+                return;
+            }
+
+            // Arvutame kogu ringiaja sekundites
+            // nt 1 min 22 s 50 sajandikku -> 60 + 22 + 0.50 = 82.50
+            let totalSeconds = lapMinutes * 60 + lapSeconds + (lapHundredths / 100);
+
+            // Kui kõik korras, näitame pilti ja edukuse sõnumit
+            $("#trackImage").show();
+            $("#successMsg").show();
+
+            // Salvestame andmed localStorage-sse
+            let savedData = JSON.parse(localStorage.getItem("raceData")) || [];
+            const newEntry = {
+                car: carName,
+                email: driverEmail,
+                time: totalSeconds, // salvestame sekundites
+                condition: trackCondition
+            };
+            savedData.push(newEntry);
+            localStorage.setItem("raceData", JSON.stringify(savedData));
+
+            // Logime konsooli kontrolliks
+            console.log("Uus andmerida salvestati:", newEntry);
+
+            // Vormi tühjendamine
+            $("#raceForm")[0].reset();
+        });
+
+        // Näita/Peida salvestatud tulemuste <div>
+        $("#toggleResults").click(function() {
+            $("#results").toggle();
+
+            // Kui DIV on nähtav, uuendame nimekirja
+            if ($("#results").is(":visible")) {
+                updateResults();
+            }
+        });
+
+        // Funktsioon, mis uuendab ekraanil salvestatud tulemuste loetelu
+        function updateResults() {
+            let savedData = JSON.parse(localStorage.getItem("raceData")) || [];
+            $("#savedTimes").empty();
+
+            // Kui pole ühtegi salvestust
+            if (savedData.length === 0) {
+                $("#savedTimes").append("<li>Pole veel salvestatud ringiaegu</li>");
+                return;
+            }
+
+            // Muidu kuvatakse kõik salvestused
+            savedData.forEach((entry, index) => {
+                // Teisendame sekundid vormingusse mm:ss:sajandik
+                let totalSeconds = parseFloat(entry.time);
+                let minutes = Math.floor(totalSeconds / 60);
+                let seconds = Math.floor(totalSeconds % 60);
+                let hundredths = Math.floor((totalSeconds - (minutes * 60) - seconds) * 100);
+
+                // Moodustame uue vormingu, näiteks: "1m 22s 50cs"
+                let formattedTime = `${minutes}m ${seconds}s ${hundredths}cs`;
+
+                const listItem = `<li>
+                  <strong>${index + 1}.</strong>
+                  Auto: ${entry.car},
+                  E-post: ${entry.email},
+                  Ringiaeg: ${formattedTime},
+                  Seisund: ${entry.condition}
+                </li>`;
+
+                $("#savedTimes").append(listItem);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

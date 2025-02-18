@@ -86,7 +86,7 @@
     <input type="text" id="carName" name="carName" placeholder="Nt Porsche 911" />
 
     <label for="driverEmail">Driver email address:</label>
-    <input type="text" id="driverEmail" name="driverEmail" placeholder="näide@autod.ee" />
+    <input type="text" id="driverEmail" name="driverEmail" placeholder="example@cars.com" />
 
     <label for="lapMinutes">Minutes:</label>
     <input type="text" id="lapMinutes" placeholder="0" />
@@ -94,7 +94,7 @@
     <label for="lapSeconds">Seconds:</label>
     <input type="text" id="lapSeconds" placeholder="0" />
 
-    <label for="lapHundredths">Centiseconds:</label>
+    <label for="lapHundredths">Hundredths:</label>
     <input type="text" id="lapHundredths" placeholder="0" />
 
     <label for="trackCondition">Track condition:</label>
@@ -178,7 +178,7 @@
             localStorage.setItem("raceData", JSON.stringify(savedData));
 
             // Logime konsooli kontrolliks
-            console.log("Uus andmerida salvestati:", newEntry);
+            console.log("New record saved:", newEntry);
 
             // Vormi tühjendamine
             $("#raceForm")[0].reset();

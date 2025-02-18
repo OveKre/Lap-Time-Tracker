@@ -2,11 +2,11 @@
 <html lang="et">
 <head>
     <meta charset="UTF-8" />
-    <title>Porsche Ringrada</title>
+    <title>Porsche Racetrack</title>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Lihtne CSS näidis */
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f7f7f7;
@@ -47,7 +47,7 @@
             background-color: #fff;
             padding: 20px;
             margin-top: 20px;
-            display: none; /* Peidame alguses */
+            display: none;
             border: 1px solid #ddd;
             max-width: 500px;
         }
@@ -71,50 +71,50 @@
 </head>
 
 <body>
-<h1>Porsche Ringrada</h1>
+<h1>Porsche Racetrack</h1>
 
 <!-- Pilt, mis ilmub alles edukal valideerimisel -->
 <img id="trackImage"
      src="pictures/slots-13-1000x618.jpg"
-     alt="Porsche Ringrada"
+     alt="Porsche Racetrack"
      class="success-img"
      style="display: none;" />
 
 <!-- Vorm kolme (või enama) väljaga -->
 <form id="raceForm">
-    <label for="carName">Auto nimi:</label>
+    <label for="carName">Car name:</label>
     <input type="text" id="carName" name="carName" placeholder="Nt Porsche 911" />
 
-    <label for="driverEmail">Juhi e-posti aadress:</label>
+    <label for="driverEmail">Driver email address:</label>
     <input type="text" id="driverEmail" name="driverEmail" placeholder="näide@autod.ee" />
 
-    <label for="lapMinutes">Minutid:</label>
+    <label for="lapMinutes">Minutes:</label>
     <input type="text" id="lapMinutes" placeholder="0" />
 
-    <label for="lapSeconds">Sekundid:</label>
+    <label for="lapSeconds">Seconds:</label>
     <input type="text" id="lapSeconds" placeholder="0" />
 
-    <label for="lapHundredths">Sajandikud:</label>
+    <label for="lapHundredths">Centiseconds:</label>
     <input type="text" id="lapHundredths" placeholder="0" />
 
-    <label for="trackCondition">Raja seisund:</label>
+    <label for="trackCondition">Track condition:</label>
     <select id="trackCondition" name="trackCondition">
-        <option value="kuiv">Kuiv</option>
-        <option value="märg">Märg</option>
+        <option value="kuiv">Dry</option>
+        <option value="märg">Wet</option>
     </select>
 
-    <button type="button" id="submitBtn">Saada</button>
+    <button type="button" id="submitBtn">Send</button>
     <div id="formError" class="error"></div>
 
     <!-- Eduka salvestamise teade -->
-    <div id="successMsg">Andmed sisestatud!</div>
+    <div id="successMsg">Data entered!</div>
 </form>
 
-<button type="button" id="toggleResults">Näita/Peida Salvestatud Tulemused</button>
+<button type="button" id="toggleResults">Show/Hide Saved Results</button>
 
 <!-- DIV salvestatud tulemustele -->
 <div id="results">
-    <h2>Salvestatud ringiajad</h2>
+    <h2>Saved Lap Times</h2>
     <ul id="savedTimes"></ul>
 </div>
 
@@ -141,20 +141,20 @@
 
             // Kontrollime, kas auto nimi ja e-post on täidetud
             if (!carName || !driverEmail) {
-                $("#formError").text("Palun täida kõik väljad!");
+                $("#formError").text("Please fill all fields");
                 return;
             }
 
             // Kontrollime, kas sisestatud minutid/sekundid/sajandikud on arvud
             if (isNaN(lapMinutes) || isNaN(lapSeconds) || isNaN(lapHundredths)) {
-                $("#formError").text("Minutid, sekundid ja sajandikud peavad olema numbrilised!");
+                $("#formError").text("Minutes, seconds and centiseconds must be numeric");
                 return;
             }
 
             // E-posti lihtsustatud regex-kontroll
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(driverEmail)) {
-                $("#formError").text("Palun sisesta korrektne e-posti aadress!");
+                $("#formError").text("Please insert a valid email address");
                 return;
             }
 
@@ -201,7 +201,7 @@
 
             // Kui pole ühtegi salvestust
             if (savedData.length === 0) {
-                $("#savedTimes").append("<li>Pole veel salvestatud ringiaegu</li>");
+                $("#savedTimes").append("<li>No Lap Times Saved Yet!</li>");
                 return;
             }
 

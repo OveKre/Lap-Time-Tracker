@@ -1,2 +1,5 @@
-/.idea
-/package.json
+# Ignoreeri WebStorm / IntelliJ IDEA seadete kausta
+.idea/
+
+# Ignoreeri package.json
+package.json

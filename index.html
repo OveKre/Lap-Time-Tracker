@@ -99,8 +99,8 @@
 
     <label for="trackCondition">Track condition:</label>
     <select id="trackCondition" name="trackCondition">
-        <option value="kuiv">Dry</option>
-        <option value="märg">Wet</option>
+        <option value="Dry">Dry</option>
+        <option value="Wet">Wet</option>
     </select>
 
     <button type="button" id="submitBtn">Send</button>
@@ -147,7 +147,7 @@
 
 
             if (isNaN(lapMinutes) || isNaN(lapSeconds) || isNaN(lapHundredths)) {
-                $("#formError").text("Minutes, seconds and centiseconds must be numeric");
+                $("#formError").text("Minutes, seconds and hundredths must be numeric");
                 return;
             }
 
@@ -218,10 +218,10 @@
 
                 const listItem = `<li>
                   <strong>${index + 1}.</strong>
-                  Auto: ${entry.car},
-                  E-post: ${entry.email},
-                  Ringiaeg: ${formattedTime},
-                  Seisund: ${entry.condition}
+                  Car: ${entry.car},
+                  Email: ${entry.email},
+                  Lap time: ${formattedTime},
+                  Condition: ${entry.condition}
                 </li>`;
 
                 $("#savedTimes").append(listItem);
